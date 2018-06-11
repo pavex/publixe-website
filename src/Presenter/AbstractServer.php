@@ -11,6 +11,13 @@
  */
 	abstract class AbstractServer extends Publixe\Website\Presenter
 	{
+		
+		
+//		public function render()
+//		{
+//			echo 'server';
+//		}
+		
 	}
 
 ?>

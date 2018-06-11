@@ -64,6 +64,30 @@
 
 
 /**
+ * @return Publixe\Http\Request
+ */
+		public function getHttpRequest()
+		{
+			return $this -> httpRequest;
+		}
+
+
+
+
+
+/**
+ * @return Publixe\Http\Response
+ */
+		public function getHttpResponse()
+		{
+			return $this -> httpResponse;
+		}
+
+
+
+
+
+/**
  * Process website presenter life-cycle
  * @param Publixe\Website\ActionHandler
  */

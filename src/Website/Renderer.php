@@ -63,10 +63,13 @@
 		private function getTemplateFilename($name, $relative_path = '')
 		{
 			$filename = sprintf('%s%s.php', $relative_path, $name);
-			if (!file_exists($filename)) {
-				throw new \InvalidArgumentException(sprintf("Invalid template file `%s`.", $filename));
-			}
-			return $filename;
+			return file_exists($filename) ?: NULL;
+			
+			
+//			if (!file_exists($filename)) {
+//				throw new \InvalidArgumentException(sprintf("Invalid template file `%s`.", $filename));
+//			}
+//			return $filename;
 		}
 
 
@@ -110,9 +113,10 @@
 			$this -> contents = NULL;
 			$name = $this -> getTemplateName($path);
 			do {
-				$filename = $this -> getTemplateFilename($name, $path);
 				$this -> parent_template_name = NULL;
-				$this -> contents = $this -> getTemplateContent($filename);
+				if ($filename = $this -> getTemplateFilename($name, $path)) {
+					$this -> contents = $this -> getTemplateContent($filename);
+				}
 				$name = $this -> parent_template_name;
 			}
 			while ($name);
