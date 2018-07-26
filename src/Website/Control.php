@@ -147,15 +147,19 @@
 		private function throwException($e)
 		{
 			$response = $this -> httpResponse;
-			$response -> setHeader('X-Exception-Type', get_class($e));
-			$response -> setHeader('X-Exception-Message', $e -> getMessage());
-			$response -> setHeader('X-Exception-Code', $e -> getCode());
-			$response -> setHeader('X-Exception-File', $e -> getFile());
-			$response -> setHeader('X-Exception-Line', $e -> getLine());
-//
+			if (defined('DEV')) {
+				$response -> setHeader('X-Exception-Type', get_class($e));
+				$response -> setHeader('X-Exception-Message', $e -> getMessage());
+				$response -> setHeader('X-Exception-Code', $e -> getCode());
+				$response -> setHeader('X-Exception-File', $e -> getFile());
+				$response -> setHeader('X-Exception-Line', $e -> getLine());
+			}
 			$response -> status = $e instanceOf IException ? $e -> getStatusCode() : 500;
 			$response -> send();
-			throw $e;
+//
+			if (defined('DEV')) {
+				throw $e;
+			}
 		}
 
 
