@@ -2,7 +2,8 @@
 
 	namespace Publixe\Website;
 	use Publixe;
-	use \InvalidArgumentException;
+	use Publixe\Website\ITemplate;
+	use \ReflectionClass;
 
 
 /**
@@ -15,9 +16,6 @@
 
 
 /** @var string */
-		private $parent_template_name = NULL;
-
-/** @var string */
 		private $contents = NULL;
 
 
@@ -25,51 +23,15 @@
 
 
 /**
- * Setup in template to define parent template if you neet it.
- * @param string
- */
-		protected function setParentTemplate($name)
-		{
-			$this -> parent_template_name = $name;
-		}
-
-
-
-
-
-/**
- * @param string
- * @return string
- */
-		private function getTemplateName(&$path)
-		{
-			$class_name = get_class($this);
-			$class_name = strtr($class_name, '\\', '/');
-			$path = preg_replace('/^(.*\/|).*$/i', '\\1template/', $class_name);
-			return preg_replace('/^.*\/|([a-z]+)/i', '\\1', $class_name);
-		}
-
-
-
-
-
-/**
  * Get existing filename of template
- * @param string
- * @param string=
- * @return string|FALSE
- * @thorw \InvalidArgumentException
+ * @param ReflectionClass
+ * @return string|NULL
  */
-		private function getTemplateFilename($name, $relative_path = '')
+		private function getTemplateFilename(ReflectionClass $reflection)
 		{
-			$filename = sprintf('%s%s.php', $relative_path, $name);
-			return file_exists($filename) ?: NULL;
-			
-			
-//			if (!file_exists($filename)) {
-//				throw new \InvalidArgumentException(sprintf("Invalid template file `%s`.", $filename));
-//			}
-//			return $filename;
+			$filename = $reflection -> getFileName();
+			$filename = preg_replace('/([a-z]+\.[a-z]+)$/i', 'template/\\1', $filename);
+			return file_exists($filename) ? $filename : NULL;
 		}
 
 
@@ -81,10 +43,10 @@
  * @param  string  template filename to include
  * @return string  the return value of the evaluated code
  */
-		protected function getTemplateContent($template_filename)
+		protected function getTemplateContents($filename)
 		{
 			ob_start();
-			include $template_filename;
+			include $filename;
 			return ob_get_clean();
 		}
 
@@ -110,16 +72,14 @@
  */
 		public function render()
 		{
-			$this -> contents = NULL;
-			$name = $this -> getTemplateName($path);
+			$reflection = new ReflectionClass($this);
 			do {
-				$this -> parent_template_name = NULL;
-				if ($filename = $this -> getTemplateFilename($name, $path)) {
-					$this -> contents = $this -> getTemplateContent($filename);
+				if ($reflection && $filename = $this -> getTemplateFilename($reflection)) {
+					$this -> contents = $this -> getTemplateContents($filename);
+					$reflection = $reflection -> getParentClass();
 				}
-				$name = $this -> parent_template_name;
 			}
-			while ($name);
+			while ($filename);
 			return $this -> contents;
 		}
 
