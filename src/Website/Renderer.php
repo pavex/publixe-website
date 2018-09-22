@@ -3,6 +3,7 @@
 	namespace Publixe\Website;
 	use Publixe;
 	use Publixe\Website\ITemplate;
+//	use \InvalidArgumentException;
 	use \ReflectionClass;
 
 
@@ -13,7 +14,6 @@
  */
 	abstract class Renderer
 	{
-
 
 /** @var string */
 		private $contents = NULL;
@@ -60,6 +60,18 @@
 		protected function getContents()
 		{
 			return $this -> contents;
+		}
+
+
+
+
+
+/**
+ * @return string
+ */
+		protected function renderContents()
+		{
+			echo $this -> getContents();
 		}
 
 
