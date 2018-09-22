@@ -15,6 +15,16 @@
 	{
 
 
+/** @var string */
+		private $pattern;
+
+/** @var string */
+		private $presenter;
+
+/** @var string|NULL */
+		private $action;
+
+
 
 
 
