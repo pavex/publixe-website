@@ -121,9 +121,6 @@
  */
 		final public function getContentType($default = 'text/html')
 		{
-var_dump($this -> getHeader('accept', FALSE));
-var_dump($this -> getHeader('content-type', FALSE));
-
 			if ($accept_string = $this -> getHeader('accept', FALSE)) {
 				if (preg_match('/^([a-z0-9\/]*)(\,|$)/i', $accept_string, $match)) {
 					return $match[1];
