@@ -121,6 +121,9 @@
  */
 		final public function getContentType($default = 'text/html')
 		{
+var_dump($this -> getHeader('accept', FALSE));
+var_dump($this -> getHeader('content-type', FALSE));
+
 			if ($accept_string = $this -> getHeader('accept', FALSE)) {
 				if (preg_match('/^([a-z0-9\/]*)(\,|$)/i', $accept_string, $match)) {
 					return $match[1];
@@ -165,13 +168,18 @@
 /**
  * @return Array<string>
  */		
-		private static function getServerHeaders()
+		private static function getRequestHeaders()
 		{
-			if (!function_exists('apache_response_headers')) {
+			if (!function_exists('apache_request_headers')) {
 				$headers = [];
-				foreach (headers_list() as $header) {
-					$header = explode(':', $header);
-					$headers[array_shift($header)] = trim(implode(":", $header));
+				foreach ($_SERVER as $k => $v) {
+					if (strncmp($k, 'HTTP_', 5) == 0) {
+						$k = substr($k, 5);
+					}
+					elseif (strncmp($k, 'CONTENT_', 8)) {
+						continue;
+					}
+					$headers[strtr($k, '_', '-')] = $v;
 				}
 				return $headers;
 			}
@@ -216,7 +224,7 @@
 			$request -> post = &$_POST;
 			$request -> files = &$_FILES;
 			$request -> cookies = &$_COOKIE;
-			$request -> headers = array_change_key_case(self::getServerHeaders(), CASE_LOWER);
+			$request -> headers = array_change_key_case(self::getRequestHeaders(), CASE_LOWER);
 			$request -> remoteAddress = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : NULL;
 			$request -> remoteHost = isset($_SERVER['REMOTE_HOST']) ? $_SERVER['REMOTE_HOST'] : NULL;
 			$request -> indirect = isset($_SERVER['REDIRECT_STATUS']);
