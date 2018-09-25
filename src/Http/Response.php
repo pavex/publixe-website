@@ -54,9 +54,7 @@
  */
 		public function setHeader($name, $value)
 		{
-			if (!isset($this -> headers[$name])) {
-				$this -> headers[$name] = $value;
-			}
+			$this -> headers[$name] = $value;
 		}
 
 
